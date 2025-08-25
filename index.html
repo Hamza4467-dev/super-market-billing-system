@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Super Market Billing System</title>
+    <!-- Bootstrap CSS CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <!-- Google Fonts - Inter for a modern look -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Custom CSS for a modern, clean look */
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f0f2f5;
+        color: #333;
+      }
+      .navbar-brand {
+        font-weight: 700;
+        color: #fff !important;
+      }
+      .nav-link {
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.75) !important;
+        transition: color 0.3s ease;
+      }
+      .nav-link:hover {
+        color: #fff !important;
+      }
+      .nav-link.active {
+        color: #fff !important;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 0.375rem; /* Rounded corners */
+      }
+      .card {
+        border-radius: 0.75rem; /* More rounded corners for cards */
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+      .btn {
+        border-radius: 0.5rem; /* Rounded buttons */
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+      .form-control,
+      .form-select {
+        border-radius: 0.5rem;
+        border: 1px solid #ced4da;
+        padding: 0.75rem 1rem;
+      }
+      .form-control:focus,
+      .form-select:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+      }
+      .table thead th {
+        background-color: #e9ecef;
+        color: #495057;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+      }
+      .modal-content {
+        border-radius: 0.75rem;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      }
+      .toast-container {
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        z-index: 1080; /* Higher than Bootstrap modals (1050) */
+      }
+      .toast {
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        animation: fadeInOut 0.5s forwards; /* Basic fade in */
+      }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+
+      /* Animations */
+      @keyframes fadeInOut {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes modalPopIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .modal.show .modal-dialog {
+        animation: modalPopIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+          forwards;
+      }
+
+      .product-card {
+        cursor: pointer;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      }
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="currentColor"
+            class="bi bi-cart-fill me-2"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
+            />
+          </svg>
+          SuperMart Billing
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                aria-current="page"
+                href="#"
+                data-page="billing"
+                >Billing</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-page="products"
+                >Product Management</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-page="history">Sales History</a>
+            </li>
+          </ul>
+          <div class="d-flex align-items-center">
+            <span
+              id="userIdDisplay"
+              class="text-white-50 me-3 d-none d-lg-block"
+              >User ID: Loading...</span
+            >
+            <button class="btn btn-outline-light" id="signOutButton">
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container-fluid py-4">
+      <!-- Billing System Section -->
+      <section id="billing" class="page-content">
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <div class="card shadow-sm h-100">
+              <div class="card-body">
+                <h2 class="card-title h3 mb-4 border-bottom pb-3">
+                  Product Selection
+                </h2>
+                <div class="mb-4">
+                  <input
+                    type="text"
+                    id="productSearchInput"
+                    class="form-control"
+                    placeholder="Search products by name..."
+                    autocomplete="off"
+                  />
+                </div>
+                <div
+                  id="productList"
+                  class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3"
+                  style="max-height: calc(100vh - 280px); overflow-y: auto"
+                >
+                  <!-- Product cards will be loaded here by JavaScript -->
+                  <div class="col text-center text-muted py-5">
+                    No products available. Add some in Product Management.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card shadow-sm h-100 d-flex flex-column">
+              <div class="card-body d-flex flex-column">
+                <h2 class="card-title h3 mb-4 border-bottom pb-3">
+                  Shopping Cart
+                </h2>
+                <div
+                  id="cartItems"
+                  class="flex-grow-1"
+                  style="max-height: calc(100vh - 450px); overflow-y: auto"
+                >
+                  <!-- Cart items will be loaded here by JavaScript -->
+                  <div class="text-center text-muted py-5">
+                    Your cart is empty.
+                  </div>
+                </div>
+                <div
+                  id="cartSummary"
+                  class="mt-auto pt-3 border-top"
+                  style="display: none"
+                >
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal:</span>
+                    <span id="subtotalAmount" class="fw-medium text-dark"
+                      >$0.00</span
+                    >
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Tax (<span id="taxRateDisplay">8%</span>):</span>
+                    <span id="taxAmount" class="fw-medium text-dark"
+                      >$0.00</span
+                    >
+                  </div>
+                  <div
+                    class="d-flex justify-content-between fw-bold fs-5 mb-3 text-primary"
+                  >
+                    <span>Total:</span>
+                    <span id="totalAmount">$0.00</span>
+                  </div>
+                  <div class="d-grid gap-2">
+                    <button class="btn btn-outline-secondary" id="clearCartBtn">
+                      Clear Cart
+                    </button>
+                    <button class="btn btn-primary btn-lg" id="checkoutBtn">
+                      Checkout
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Product Management Section -->
+      <section id="products" class="page-content d-none">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h2 class="card-title h3 mb-4 border-bottom pb-3">
+              Product Management
+            </h2>
+            <div
+              class="mb-4 d-flex flex-column flex-md-row justify-content-between align-items-center gap-3"
+            >
+              <input
+                type="text"
+                id="manageProductSearch"
+                class="form-control me-md-2"
+                placeholder="Search products..."
+              />
+              <button
+                class="btn btn-primary flex-shrink-0"
+                id="addProductBtn"
+                data-bs-toggle="modal"
+                data-bs-target="#productModal"
+              >
+                Add New Product
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead>
+                  <tr>
+                    <th scope="col" class="cursor-pointer" data-sort-key="name">
+                      Product Name <span class="sort-icon"></span>
+                    </th>
+                    <th
+                      scope="col"
+                      class="cursor-pointer"
+                      data-sort-key="price"
+                    >
+                      Price <span class="sort-icon"></span>
+                    </th>
+                    <th
+                      scope="col"
+                      class="cursor-pointer"
+                      data-sort-key="stock"
+                    >
+                      Stock <span class="sort-icon"></span>
+                    </th>
+                    <th scope="col" class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="productManagementList">
+                  <!-- Products will be loaded here by JavaScript -->
+                  <tr>
+                    <td colspan="4" class="text-center text-muted py-4">
+                      No products found.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sales History Section -->
+      <section id="history" class="page-content d-none">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h2 class="card-title h3 mb-4 border-bottom pb-3">Sales History</h2>
+            <div class="mb-4">
+              <input
+                type="text"
+                id="salesHistorySearch"
+                class="form-control"
+                placeholder="Search sales by ID, product, or total..."
+                autocomplete="off"
+              />
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead>
+                  <tr>
+                    <th scope="col">Sale ID</th>
+                    <th scope="col" class="cursor-pointer" data-sort-key="date">
+                      Date & Time <span class="sort-icon"></span>
+                    </th>
+                    <th scope="col">Items Count</th>
+                    <th
+                      scope="col"
+                      class="cursor-pointer"
+                      data-sort-key="total"
+                    >
+                      Total Amount <span class="sort-icon"></span>
+                    </th>
+                    <th scope="col" class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="salesHistoryList">
+                  <!-- Sales history will be loaded here by JavaScript -->
+                  <tr>
+                    <td colspan="5" class="text-center text-muted py-4">
+                      No sales records found.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Product Add/Edit Modal -->
+    <div
+      class="modal fade"
+      id="productModal"
+      tabindex="-1"
+      aria-labelledby="productModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="productModalLabel">Add New Product</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="productForm">
+              <input type="hidden" id="productId" />
+              <div class="mb-3">
+                <label for="productName" class="form-label">Product Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="productName"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="productPrice" class="form-label">Price</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="productPrice"
+                  min="0"
+                  step="0.01"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="productStock" class="form-label">Stock</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="productStock"
+                  min="0"
+                  required
+                />
+              </div>
+              <div class="d-grid gap-2 mt-4">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="saveProductBtn"
+                >
+                  Save Product
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div
+      class="modal fade"
+      id="deleteConfirmModal"
+      tabindex="-1"
+      aria-labelledby="deleteConfirmModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title" id="deleteConfirmModalLabel">
+              Confirm Deletion
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>
+              Are you sure you want to delete this product? This action cannot
+              be undone.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div
+      class="modal fade"
+      id="checkoutModal"
+      tabindex="-1"
+      aria-labelledby="checkoutModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title" id="checkoutModalLabel">
+              Complete Purchase
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <h4 class="mb-3">
+              Total Amount:
+              <span id="checkoutTotalAmount" class="text-success">$0.00</span>
+            </h4>
+            <div class="mb-3">
+              <label for="paymentAmount" class="form-label">Amount Paid</label>
+              <input
+                type="number"
+                class="form-control"
+                id="paymentAmount"
+                min="0"
+                step="0.01"
+                required
+                autofocus
+              />
+            </div>
+            <h5
+              id="changeAmountDisplay"
+              class="text-info mt-4"
+              style="display: none"
+            >
+              Change: <span id="calculatedChange">$0.00</span>
+            </h5>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              id="processPaymentBtn"
+            >
+              Process Payment
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Bootstrap JS CDN (Bundle with Popper) -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Firebase JS SDK -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import {
+        getAuth,
+        signInAnonymously,
+        signInWithCustomToken,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+        addDoc,
+        setDoc,
+        updateDoc,
+        deleteDoc,
+        onSnapshot,
+        collection,
+        query,
+        where,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+      let app,
+        db,
+        auth,
+        userId = null;
+      let isAuthReady = false;
+
+      const appId =
+        typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+      const firebaseConfig =
+        typeof __firebase_config !== "undefined"
+          ? JSON.parse(__firebase_config)
+          : {};
+      const initialAuthToken =
+        typeof __initial_auth_token !== "undefined"
+          ? __initial_auth_token
+          : null;
+
+      // Initialize Firebase when the DOM is fully loaded
+      document.addEventListener("DOMContentLoaded", async () => {
+        if (Object.keys(firebaseConfig).length > 0) {
+          app = initializeApp(firebaseConfig);
+          db = getFirestore(app);
+          auth = getAuth(app);
+
+          onAuthStateChanged(auth, async (user) => {
+            if (user) {
+              userId = user.uid;
+              console.log("Firebase: Signed in as", userId);
+              document.getElementById(
+                "userIdDisplay"
+              ).textContent = `User ID: ${userId}`;
+            } else {
+              console.log(
+                "Firebase: No user signed in. Attempting anonymous sign-in."
+              );
+              try {
+                if (initialAuthToken) {
+                  await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                  await signInAnonymously(auth);
+                }
+              } catch (error) {
+                console.error("Firebase: Anonymous sign-in failed:", error);
+                showToast("Failed to sign in. Please check console.", "danger");
+              }
+            }
+            isAuthReady = true;
+
+            loadProducts();
+            loadSalesHistory();
+          });
+        } else {
+          console.log(
+            "Firebase: Config not available. Running without Firestore."
+          );
+          isAuthReady = true;
+
+          loadProducts();
+          loadSalesHistory();
+        }
+
+        document
+          .getElementById("signOutButton")
+          .addEventListener("click", async () => {
+            if (auth) {
+              try {
+                await signOut(auth);
+                showToast("Signed out successfully!", "info");
+              } catch (error) {
+                console.error("Error signing out:", error);
+                showToast("Failed to sign out. Please try again.", "danger");
+              }
+            }
+          });
+      });
+
+      function showToast(message, type = "info") {
+        const toastContainer = document.getElementById("toastContainer");
+        const toastId = `toast-${Date.now()}`;
+        const bgColorClass =
+          {
+            success: "bg-success",
+            danger: "bg-danger",
+            info: "bg-info",
+            warning: "bg-warning",
+          }[type] || "bg-info";
+
+        const toastHtml = `
+                <div id="${toastId}" class="toast align-items-center text-white ${bgColorClass} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            `;
+        toastContainer.insertAdjacentHTML("beforeend", toastHtml);
+        const toastElement = document.getElementById(toastId);
+        const bootstrapToast = new bootstrap.Toast(toastElement);
+        bootstrapToast.show();
+        toastElement.addEventListener("hidden.bs.toast", () =>
+          toastElement.remove()
+        );
+      }
+
+      function formatDateTime(isoString) {
+        if (!isoString) return "N/A";
+        const date = new Date(isoString);
+        return date.toLocaleString();
+      }
+
+      // --- Navigation ---
+      document.querySelectorAll(".nav-link").forEach((link) => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          const targetPage = this.dataset.page;
+
+          // Remove active class from all links and add to clicked one
+          document
+            .querySelectorAll(".nav-link")
+            .forEach((nav) => nav.classList.remove("active"));
+          this.classList.add("active");
+
+          // Hide all pages and show the target page
+          document
+            .querySelectorAll(".page-content")
+            .forEach((page) => page.classList.add("d-none"));
+          document.getElementById(targetPage).classList.remove("d-none");
+
+          // Re-render relevant lists when navigating to ensure fresh data
+          if (targetPage === "billing") {
+            renderProductList();
+            renderCart();
+          } else if (targetPage === "products") {
+            renderProductManagementList();
+          } else if (targetPage === "history") {
+            renderSalesHistoryList();
+          }
+        });
+      });
+
+      let products = [];
+      let productSortKey = "name";
+      let productSortOrder = "asc"; // 'asc' or 'desc'
+
+      async function loadProducts() {
+        if (!isAuthReady) {
+          console.log("Load Products: Auth not ready.");
+          return;
+        }
+
+        if (db && userId) {
+          try {
+            const productsCollectionRef = collection(
+              db,
+              `artifacts/${appId}/users/${userId}/products`
+            );
+            onSnapshot(
+              productsCollectionRef,
+              (snapshot) => {
+                products = snapshot.docs.map((doc) => ({
+                  id: doc.id,
+                  ...doc.data(),
+                }));
+                renderProductList(); // Re-render billing product list
+                renderProductManagementList(); // Re-render product management list
+                console.log("Firestore: Products loaded and rendered.");
+              },
+              (error) => {
+                console.error("Error fetching products from Firestore:", error);
+                showToast(
+                  "Failed to load products from cloud. Using local data.",
+                  "danger"
+                );
+                // Fallback to localStorage
+                products = JSON.parse(localStorage.getItem("products")) || [];
+                renderProductList();
+                renderProductManagementList();
+              }
+            );
+          } catch (error) {
+            console.error(
+              "Error setting up Firestore products listener:",
+              error
+            );
+            showToast(
+              "Failed to connect to product data. Using local data.",
+              "danger"
+            );
+            products = JSON.parse(localStorage.getItem("products")) || [];
+            renderProductList();
+            renderProductManagementList();
+          }
+        } else {
+          products = JSON.parse(localStorage.getItem("products")) || [];
+          renderProductList();
+          renderProductManagementList();
+          showToast(
+            "Using local storage for products. Firebase not configured.",
+            "info"
+          );
+        }
+      }
+
+      /**
+       * Saves products to localStorage (fallback).
+       */
+      function saveProductsToLocalStorage() {
+        if (!db) {
+          // Only save to local storage if Firestore is not active
+          localStorage.setItem("products", JSON.stringify(products));
+        }
+      }
+
+      /**
+       * Adds a new product to Firestore/localStorage.
+       * @param {object} product - The product data.
+       */
+      async function addProduct(product) {
+        if (!product.name || !product.price || !product.stock) {
+          showToast("Please fill all product fields.", "danger");
+          return;
+        }
+
+        if (db && userId) {
+          try {
+            const productsCollectionRef = collection(
+              db,
+              `artifacts/${appId}/users/${userId}/products`
+            );
+            await addDoc(productsCollectionRef, {
+              ...product,
+              price: parseFloat(product.price),
+              stock: parseInt(product.stock),
+            });
+            showToast("Product added successfully!", "success");
+          } catch (error) {
+            console.error("Error adding product to Firestore:", error);
+            showToast("Failed to add product. Please try again.", "danger");
+          }
+        } else {
+          const newProduct = {
+            id: Date.now().toString(),
+            ...product,
+            price: parseFloat(product.price),
+            stock: parseInt(product.stock),
+          };
+          products.push(newProduct);
+          saveProductsToLocalStorage();
+          renderProductManagementList();
+          renderProductList();
+          showToast("Product added successfully! (Local storage)", "success");
+        }
+      }
+
+      /**
+       * Updates an existing product in Firestore/localStorage.
+       * @param {object} updatedProduct - The updated product data.
+       */
+      async function updateProduct(updatedProduct) {
+        if (
+          !updatedProduct.name ||
+          !updatedProduct.price ||
+          !updatedProduct.stock
+        ) {
+          showToast("Please fill all product fields.", "danger");
+          return;
+        }
+
+        if (db && userId) {
+          try {
+            const productDocRef = doc(
+              db,
+              `artifacts/${appId}/users/${userId}/products`,
+              updatedProduct.id
+            );
+            await updateDoc(productDocRef, {
+              ...updatedProduct,
+              price: parseFloat(updatedProduct.price),
+              stock: parseInt(updatedProduct.stock),
+            });
+            showToast("Product updated successfully!", "success");
+          } catch (error) {
+            console.error("Error updating product in Firestore:", error);
+            showToast("Failed to update product. Please try again.", "danger");
+          }
+        } else {
+          products = products.map((p) =>
+            p.id === updatedProduct.id
+              ? {
+                  ...updatedProduct,
+                  price: parseFloat(updatedProduct.price),
+                  stock: parseInt(updatedProduct.stock),
+                }
+              : p
+          );
+          saveProductsToLocalStorage();
+          renderProductManagementList();
+          renderProductList();
+          showToast("Product updated successfully! (Local storage)", "success");
+        }
+      }
+
+      /**
+       * Deletes a product from Firestore/localStorage.
+       * @param {string} id - The ID of the product to delete.
+       */
+      async function deleteProduct(id) {
+        if (db && userId) {
+          try {
+            const productDocRef = doc(
+              db,
+              `artifacts/${appId}/users/${userId}/products`,
+              id
+            );
+            await deleteDoc(productDocRef);
+            showToast("Product deleted successfully!", "success");
+          } catch (error) {
+            console.error("Error deleting product from Firestore:", error);
+            showToast("Failed to delete product. Please try again.", "danger");
+          }
+        } else {
+          products = products.filter((p) => p.id !== id);
+          saveProductsToLocalStorage();
+          renderProductManagementList();
+          renderProductList();
+          showToast("Product deleted successfully! (Local storage)", "success");
+        }
+      }
+
+      const productModal = new bootstrap.Modal(
+        document.getElementById("productModal")
+      );
+      const deleteConfirmModal = new bootstrap.Modal(
+        document.getElementById("deleteConfirmModal")
+      );
+      let productIdToDelete = null;
+
+      document.getElementById("addProductBtn").addEventListener("click", () => {
+        document.getElementById("productModalLabel").textContent =
+          "Add New Product";
+        document.getElementById("productId").value = "";
+        document.getElementById("productForm").reset();
+      });
+
+      document
+        .getElementById("productForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const id = document.getElementById("productId").value;
+          const name = document.getElementById("productName").value;
+          const price = parseFloat(
+            document.getElementById("productPrice").value
+          );
+          const stock = parseInt(document.getElementById("productStock").value);
+
+          if (id) {
+            await updateProduct({ id, name, price, stock });
+          } else {
+            await addProduct({ name, price, stock });
+          }
+          productModal.hide();
+        });
+
+      document
+        .getElementById("confirmDeleteBtn")
+        .addEventListener("click", async () => {
+          if (productIdToDelete) {
+            await deleteProduct(productIdToDelete);
+            productIdToDelete = null;
+            deleteConfirmModal.hide();
+          }
+        });
+
+      document
+        .getElementById("manageProductSearch")
+        .addEventListener("input", renderProductManagementList);
+
+      document
+        .querySelector("#products thead")
+        .addEventListener("click", (e) => {
+          const th = e.target.closest("th");
+          if (th && th.dataset.sortKey) {
+            const newSortKey = th.dataset.sortKey;
+            if (productSortKey === newSortKey) {
+              productSortOrder = productSortOrder === "asc" ? "desc" : "asc";
+            } else {
+              productSortKey = newSortKey;
+              productSortOrder = "asc";
+            }
+            renderProductManagementList();
+          }
+        });
+
+      /**
+       * Renders the product list for the Product Management page.
+       */
+      function renderProductManagementList() {
+        const productListElement = document.getElementById(
+          "productManagementList"
+        );
+        const searchTerm = document
+          .getElementById("manageProductSearch")
+          .value.toLowerCase();
+
+        const filteredAndSortedProducts = [...products]
+          .filter((p) => p.name.toLowerCase().includes(searchTerm))
+          .sort((a, b) => {
+            const valA = a[productSortKey];
+            const valB = b[productSortKey];
+
+            if (typeof valA === "string") {
+              return productSortOrder === "asc"
+                ? valA.localeCompare(valB)
+                : valB.localeCompare(valA);
+            }
+            return productSortOrder === "asc" ? valA - valB : valB - valA;
+          });
+
+        productListElement.innerHTML = ""; // Clear existing list
+
+        if (filteredAndSortedProducts.length === 0) {
+          productListElement.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">No products found.</td></tr>`;
+          return;
+        }
+
+        filteredAndSortedProducts.forEach((product) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>$${product.price.toFixed(2)}</td>
+                    <td>${product.stock}</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-info me-2 edit-btn" data-id="${
+                          product.id
+                        }">Edit</button>
+                        <button class="btn btn-sm btn-danger delete-btn" data-id="${
+                          product.id
+                        }">Delete</button>
+                    </td>
+                `;
+          productListElement.appendChild(row);
+        });
+
+        // Add event listeners for edit/delete buttons
+        productListElement.querySelectorAll(".edit-btn").forEach((button) => {
+          button.addEventListener("click", function () {
+            const id = this.dataset.id;
+            const product = products.find((p) => p.id === id);
+            if (product) {
+              document.getElementById("productModalLabel").textContent =
+                "Edit Product";
+              document.getElementById("productId").value = product.id;
+              document.getElementById("productName").value = product.name;
+              document.getElementById("productPrice").value = product.price;
+              document.getElementById("productStock").value = product.stock;
+              productModal.show();
+            }
+          });
+        });
+
+        productListElement.querySelectorAll(".delete-btn").forEach((button) => {
+          button.addEventListener("click", function () {
+            productIdToDelete = this.dataset.id;
+            deleteConfirmModal.show();
+          });
+        });
+
+        // Update sort icons
+        document
+          .querySelectorAll("#products thead th .sort-icon")
+          .forEach((icon) => (icon.textContent = ""));
+        const currentSortTh = document.querySelector(
+          `#products thead th[data-sort-key="${productSortKey}"]`
+        );
+        if (currentSortTh) {
+          currentSortTh.querySelector(".sort-icon").textContent =
+            productSortOrder === "asc" ? " ▲" : " ▼";
+        }
+      }
+
+      let cart = [];
+      const taxRate = 0.08; // 8% tax
+
+      document
+        .getElementById("productSearchInput")
+        .addEventListener("input", renderProductList);
+      document
+        .getElementById("clearCartBtn")
+        .addEventListener("click", clearCart);
+      document
+        .getElementById("checkoutBtn")
+        .addEventListener("click", handleCheckout);
+
+      const checkoutModal = new bootstrap.Modal(
+        document.getElementById("checkoutModal")
+      );
+      document
+        .getElementById("processPaymentBtn")
+        .addEventListener("click", processPayment);
+      document
+        .getElementById("paymentAmount")
+        .addEventListener("input", calculateChange);
+
+      /**
+       * Renders the product list for the Billing page.
+       */
+      function renderProductList() {
+        const productListElement = document.getElementById("productList");
+        const searchTerm = document
+          .getElementById("productSearchInput")
+          .value.toLowerCase();
+
+        const filteredProducts = products.filter(
+          (product) =>
+            product.name.toLowerCase().includes(searchTerm) && product.stock > 0
+        );
+
+        productListElement.innerHTML = "";
+
+        if (filteredProducts.length === 0) {
+          productListElement.innerHTML = `<div class="col text-center text-muted py-5">${
+            searchTerm
+              ? "No matching products found."
+              : "No products available. Add some in Product Management."
+          }</div>`;
+          return;
+        }
+
+        filteredProducts.forEach((product) => {
+          const col = document.createElement("div");
+          col.className = "col";
+          col.innerHTML = `
+                    <div class="card h-100 product-card" data-id="${
+                      product.id
+                    }">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">${product.name}</h5>
+                            <p class="card-text text-muted mb-2">$${product.price.toFixed(
+                              2
+                            )}</p>
+                            <p class="card-text text-sm">Stock: <span class="badge ${
+                              product.stock > 10
+                                ? "bg-success"
+                                : product.stock > 0
+                                ? "bg-warning text-dark"
+                                : "bg-danger"
+                            }">${product.stock}</span></p>
+                            <button class="btn btn-primary mt-auto add-to-cart-btn" data-id="${
+                              product.id
+                            }" ${product.stock === 0 ? "disabled" : ""}>
+                                ${
+                                  product.stock === 0
+                                    ? "Out of Stock"
+                                    : "Add to Cart"
+                                }
+                            </button>
+                        </div>
+                    </div>
+                `;
+          productListElement.appendChild(col);
+        });
+
+        // Add event listeners for "Add to Cart" buttons
+        productListElement
+          .querySelectorAll(".add-to-cart-btn")
+          .forEach((button) => {
+            button.addEventListener("click", function (e) {
+              e.stopPropagation(); // Prevent card click event from firing
+              addToCart(this.dataset.id);
+            });
+          });
+        // Add event listeners for clicking anywhere on the card
+        productListElement.querySelectorAll(".product-card").forEach((card) => {
+          card.addEventListener("click", function () {
+            const productId = this.dataset.id;
+            const product = products.find((p) => p.id === productId);
+            if (product && product.stock > 0) {
+              addToCart(productId);
+            } else if (product && product.stock === 0) {
+              showToast("Product is out of stock.", "warning");
+            }
+          });
+        });
+      }
+
+      /**
+       * Renders the current state of the shopping cart.
+       */
+      function renderCart() {
+        const cartItemsElement = document.getElementById("cartItems");
+        const cartSummaryElement = document.getElementById("cartSummary");
+        cartItemsElement.innerHTML = ""; // Clear existing items
+
+        if (cart.length === 0) {
+          cartItemsElement.innerHTML = `<div class="text-center text-muted py-5">Your cart is empty.</div>`;
+          cartSummaryElement.style.display = "none";
+          return;
+        }
+
+        cartSummaryElement.style.display = "block";
+
+        let subtotal = 0;
+        cart.forEach((item) => {
+          subtotal += item.price * item.quantity;
+
+          const cartItemDiv = document.createElement("div");
+          cartItemDiv.className =
+            "d-flex justify-content-between align-items-center border-bottom pb-2 mb-2";
+          cartItemDiv.innerHTML = `
+                    <div>
+                        <p class="fw-semibold mb-0">${item.name}</p>
+                        <small class="text-muted">$${item.price.toFixed(2)} x ${
+            item.quantity
+          }</small>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-sm btn-outline-secondary me-1 update-quantity-btn" data-id="${
+                          item.id
+                        }" data-action="decrement">-</button>
+                        <span class="fw-medium">${item.quantity}</span>
+                        <button class="btn btn-sm btn-outline-secondary ms-1 update-quantity-btn" data-id="${
+                          item.id
+                        }" data-action="increment">+</button>
+                        <button class="btn btn-sm btn-danger ms-3 remove-from-cart-btn" data-id="${
+                          item.id
+                        }">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+          cartItemsElement.appendChild(cartItemDiv);
+        });
+
+        // Update summary
+        const taxAmount = subtotal * taxRate;
+        const total = subtotal + taxAmount;
+        document.getElementById(
+          "subtotalAmount"
+        ).textContent = `$${subtotal.toFixed(2)}`;
+        document.getElementById("taxRateDisplay").textContent = `${(
+          taxRate * 100
+        ).toFixed(0)}%`;
+        document.getElementById(
+          "taxAmount"
+        ).textContent = `$${taxAmount.toFixed(2)}`;
+        document.getElementById("totalAmount").textContent = `$${total.toFixed(
+          2
+        )}`;
+        document.getElementById(
+          "checkoutTotalAmount"
+        ).textContent = `$${total.toFixed(2)}`;
+
+        // Add event listeners for cart quantity and remove buttons
+        cartItemsElement
+          .querySelectorAll(".update-quantity-btn")
+          .forEach((button) => {
+            button.addEventListener("click", function () {
+              const id = this.dataset.id;
+              const action = this.dataset.action;
+              const item = cart.find((i) => i.id === id);
+              if (item) {
+                let newQuantity = item.quantity;
+                if (action === "increment") {
+                  newQuantity++;
+                } else {
+                  newQuantity--;
+                }
+                updateCartQuantity(id, newQuantity);
+              }
+            });
+          });
+
+        cartItemsElement
+          .querySelectorAll(".remove-from-cart-btn")
+          .forEach((button) => {
+            button.addEventListener("click", function () {
+              removeFromCart(this.dataset.id);
+            });
+          });
+      }
+
+      function addToCart(productId, quantity = 1) {
+        const product = products.find((p) => p.id === productId);
+        if (!product) {
+          showToast("Product not found!", "danger");
+          return;
+        }
+        if (product.stock < quantity) {
+          showToast(
+            `Not enough stock for ${product.name}. Available: ${product.stock}`,
+            "warning"
+          );
+          return;
+        }
+
+        const existingItemIndex = cart.findIndex(
+          (item) => item.id === productId
+        );
+        if (existingItemIndex > -1) {
+          const newQuantity = cart[existingItemIndex].quantity + quantity;
+          if (product.stock < newQuantity) {
+            showToast(
+              `Cannot add more ${product.name}. Max stock reached (${product.stock}).`,
+              "warning"
+            );
+            return;
+          }
+          cart[existingItemIndex].quantity = newQuantity;
+        } else {
+          cart.push({ ...product, quantity });
+        }
+        showToast(`${quantity} ${product.name} added to cart!`, "success");
+        renderCart();
+        // No need to save cart to local storage, it's temporary state
+      }
+
+      function updateCartQuantity(productId, newQuantity) {
+        const product = products.find((p) => p.id === productId);
+        if (!product) return;
+
+        if (newQuantity <= 0) {
+          removeFromCart(productId);
+          return;
+        }
+        if (product.stock < newQuantity) {
+          showToast(
+            `Not enough stock for ${product.name}. Available: ${product.stock}`,
+            "warning"
+          );
+          return;
+        }
+
+        cart = cart.map((item) =>
+          item.id === productId ? { ...item, quantity: newQuantity } : item
+        );
+        renderCart();
+      }
+
+      function removeFromCart(productId) {
+        cart = cart.filter((item) => item.id !== productId);
+        showToast("Item removed from cart!", "info");
+        renderCart();
+      }
+
+      function clearCart() {
+        cart = [];
+        showToast("Cart cleared!", "info");
+        renderCart();
+      }
+
+      function handleCheckout() {
+        if (cart.length === 0) {
+          showToast(
+            "Cart is empty. Please add items to cart before checking out.",
+            "danger"
+          );
+          return;
+        }
+        const currentTotal = parseFloat(
+          document.getElementById("totalAmount").textContent.replace("$", "")
+        );
+        document.getElementById(
+          "checkoutTotalAmount"
+        ).textContent = `$${currentTotal.toFixed(2)}`;
+        document.getElementById("paymentAmount").value = "";
+        document.getElementById("paymentAmount").min = currentTotal.toFixed(2);
+        document.getElementById("changeAmountDisplay").style.display = "none";
+        checkoutModal.show();
+      }
+
+      function calculateChange() {
+        const total = parseFloat(
+          document.getElementById("totalAmount").textContent.replace("$", "")
+        );
+        const payment = parseFloat(
+          document.getElementById("paymentAmount").value
+        );
+        if (!isNaN(payment) && payment >= total) {
+          const change = payment - total;
+          document.getElementById(
+            "calculatedChange"
+          ).textContent = `$${change.toFixed(2)}`;
+          document.getElementById("changeAmountDisplay").style.display =
+            "block";
+        } else {
+          document.getElementById("changeAmountDisplay").style.display = "none";
+        }
+      }
+
+      /**
+       * Processes the payment, updates stock, records sale, and clears cart.
+       */
+      async function processPayment() {
+        const total = parseFloat(
+          document.getElementById("totalAmount").textContent.replace("$", "")
+        );
+        const payment = parseFloat(
+          document.getElementById("paymentAmount").value
+        );
+
+        if (isNaN(payment) || payment < total) {
+          showToast(
+            "Invalid payment amount. Please enter an amount greater than or equal to the total.",
+            "danger"
+          );
+          return;
+        }
+
+        const change = payment - total;
+
+        const newSalesRecord = {
+          id: Date.now().toString(),
+          date: new Date().toISOString(),
+          items: cart.map((item) => ({
+            // Store a snapshot of cart items
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+          total: total,
+          payment: {
+            method: "Cash",
+            amountPaid: payment,
+            change: change,
+          },
+          userId: userId,
+        };
+
+        if (db && userId) {
+          try {
+            const salesHistoryCollectionRef = collection(
+              db,
+              `artifacts/${appId}/users/${userId}/salesHistory`
+            );
+            await addDoc(salesHistoryCollectionRef, newSalesRecord);
+
+            // Update product stock in Firestore
+            for (const item of cart) {
+              const productDocRef = doc(
+                db,
+                `artifacts/${appId}/users/${userId}/products`,
+                item.id
+              );
+              const productDoc = await getDoc(productDocRef);
+              if (productDoc.exists()) {
+                const currentStock = productDoc.data().stock;
+                await updateDoc(productDocRef, {
+                  stock: currentStock - item.quantity,
+                });
+              }
+            }
+
+            showToast("Sale processed successfully!", "success");
+            checkoutModal.hide();
+            clearCart();
+            // Products and sales history will re-render automatically due to onSnapshot listeners
+          } catch (error) {
+            console.error("Error processing sale with Firestore:", error);
+            showToast("Failed to process sale. Please try again.", "danger");
+          }
+        } else {
+          // Fallback to local storage
+          salesHistory.push(newSalesRecord);
+          saveSalesHistoryToLocalStorage();
+
+          // Update product stock in local storage
+          products = products.map((p) => {
+            const cartItem = cart.find((item) => item.id === p.id);
+            return cartItem ? { ...p, stock: p.stock - cartItem.quantity } : p;
+          });
+          saveProductsToLocalStorage();
+          renderProductList(); // Update available products in billing
+          renderProductManagementList(); // Update products in management view
+
+          showToast("Sale processed successfully! (Local storage)", "success");
+          checkoutModal.hide();
+          clearCart();
+          renderSalesHistoryList(); // Re-render history if local storage is used
+        }
+      }
+
+      // --- Sales History (State & Persistence) ---
+      let salesHistory = [];
+      let salesSortKey = "date";
+      let salesSortOrder = "desc"; // 'asc' or 'desc'
+
+      /**
+       * Loads sales history from Firestore or localStorage.
+       */
+      async function loadSalesHistory() {
+        if (!isAuthReady) {
+          console.log("Load Sales History: Auth not ready.");
+          return;
+        }
+
+        if (db && userId) {
+          try {
+            const salesCollectionRef = collection(
+              db,
+              `artifacts/${appId}/users/${userId}/salesHistory`
+            );
+            onSnapshot(
+              salesCollectionRef,
+              (snapshot) => {
+                salesHistory = snapshot.docs.map((doc) => ({
+                  id: doc.id,
+                  ...doc.data(),
+                }));
+                renderSalesHistoryList();
+                console.log("Firestore: Sales history loaded and rendered.");
+              },
+              (error) => {
+                console.error(
+                  "Error fetching sales history from Firestore:",
+                  error
+                );
+                showToast(
+                  "Failed to load sales history from cloud. Using local data.",
+                  "danger"
+                );
+                // Fallback to localStorage
+                salesHistory =
+                  JSON.parse(localStorage.getItem("salesHistory")) || [];
+                renderSalesHistoryList();
+              }
+            );
+          } catch (error) {
+            console.error(
+              "Error setting up Firestore sales history listener:",
+              error
+            );
+            showToast(
+              "Failed to connect to sales history data. Using local data.",
+              "danger"
+            );
+            salesHistory =
+              JSON.parse(localStorage.getItem("salesHistory")) || [];
+            renderSalesHistoryList();
+          }
+        } else {
+          salesHistory = JSON.parse(localStorage.getItem("salesHistory")) || [];
+          renderSalesHistoryList();
+          showToast(
+            "Using local storage for sales history. Firebase not configured.",
+            "info"
+          );
+        }
+      }
+
+      /**
+       * Saves sales history to localStorage (fallback).
+       */
+      function saveSalesHistoryToLocalStorage() {
+        if (!db) {
+          // Only save to local storage if Firestore is not active
+          localStorage.setItem("salesHistory", JSON.stringify(salesHistory));
+        }
+      }
+
+      // --- Sales History UI Rendering ---
+      const saleDetailsModal = new bootstrap.Modal(
+        document.getElementById("saleDetailsModal") ||
+          document.createElement("div")
+      ); // Placeholder if not found
+      let selectedSaleForDetails = null;
+
+      // Dynamically create saleDetailsModal if it doesn't exist to avoid errors for first run
+      if (!document.getElementById("saleDetailsModal")) {
+        const modalDiv = document.createElement("div");
+        modalDiv.id = "saleDetailsModal";
+        modalDiv.classList.add("modal", "fade");
+        modalDiv.setAttribute("tabindex", "-1");
+        modalDiv.setAttribute("aria-labelledby", "saleDetailsModalLabel");
+        modalDiv.setAttribute("aria-hidden", "true");
+        modalDiv.innerHTML = `
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="saleDetailsModalLabel">Sale Details</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Sale ID:</strong> <span id="detailSaleId"></span></p>
+                            <p><strong>Date:</strong> <span id="detailSaleDate"></span></p>
+                            <p><strong>Payment Method:</strong> <span id="detailPaymentMethod"></span></p>
+                            <p><strong>Amount Paid:</strong> <span id="detailAmountPaid"></span></p>
+                            <p><strong>Change:</strong> <span id="detailChange"></span></p>
+                            <h6 class="mt-4">Items:</h6>
+                            <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                                <table class="table table-sm table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Price</th>
+                                            <th>Qty</th>
+                                            <th>Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="detailSaleItems">
+                                        <!-- Items will be inserted here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <h5 class="mt-4 text-primary">Total Sale Amount: <span id="detailSaleTotal"></span></h5>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        document.body.appendChild(modalDiv);
+        selectedSaleForDetails = new bootstrap.Modal(
+          document.getElementById("saleDetailsModal")
+        );
+      } else {
+        selectedSaleForDetails = new bootstrap.Modal(
+          document.getElementById("saleDetailsModal")
+        );
+      }
+
+      document
+        .getElementById("salesHistorySearch")
+        .addEventListener("input", renderSalesHistoryList);
+
+      document
+        .querySelector("#history thead")
+        .addEventListener("click", (e) => {
+          const th = e.target.closest("th");
+          if (th && th.dataset.sortKey) {
+            const newSortKey = th.dataset.sortKey;
+            if (salesSortKey === newSortKey) {
+              salesSortOrder = salesSortOrder === "asc" ? "desc" : "asc";
+            } else {
+              salesSortKey = newSortKey;
+              salesSortOrder = "asc";
+            }
+            renderSalesHistoryList();
+          }
+        });
+
+      /**
+       * Renders the sales history list.
+       */
+      function renderSalesHistoryList() {
+        const salesHistoryListElement =
+          document.getElementById("salesHistoryList");
+        const searchTerm = document
+          .getElementById("salesHistorySearch")
+          .value.toLowerCase();
+
+        const filteredAndSortedHistory = [...salesHistory]
+          .filter(
+            (sale) =>
+              sale.id.toLowerCase().includes(searchTerm) ||
+              sale.items.some((item) =>
+                item.name.toLowerCase().includes(searchTerm)
+              ) ||
+              sale.total.toString().includes(searchTerm)
+          )
+          .sort((a, b) => {
+            const valA = a[salesSortKey];
+            const valB = b[salesSortKey];
+
+            if (salesSortKey === "date") {
+              const dateA = new Date(valA);
+              const dateB = new Date(valB);
+              return salesSortOrder === "asc" ? dateA - dateB : dateB - dateA;
+            }
+            if (salesSortKey === "total") {
+              return salesSortOrder === "asc" ? valA - valB : valB - valA;
+            }
+            return 0;
+          });
+
+        salesHistoryListElement.innerHTML = "";
+
+        if (filteredAndSortedHistory.length === 0) {
+          salesHistoryListElement.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">No sales records found.</td></tr>`;
+          return;
+        }
+
+        filteredAndSortedHistory.forEach((sale) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                    <td>${sale.id.substring(0, 8)}...</td>
+                    <td>${formatDateTime(sale.date)}</td>
+                    <td>${sale.items.length}</td>
+                    <td class="fw-bold text-primary">$${sale.total.toFixed(
+                      2
+                    )}</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="${
+                          sale.id
+                        }">View Details</button>
+                    </td>
+                `;
+          salesHistoryListElement.appendChild(row);
+        });
+
+        salesHistoryListElement
+          .querySelectorAll(".view-details-btn")
+          .forEach((button) => {
+            button.addEventListener("click", function () {
+              const id = this.dataset.id;
+              const sale = salesHistory.find((s) => s.id === id);
+              if (sale) {
+                document.getElementById("detailSaleId").textContent = sale.id;
+                document.getElementById("detailSaleDate").textContent =
+                  formatDateTime(sale.date);
+                document.getElementById("detailPaymentMethod").textContent =
+                  sale.payment?.method || "N/A";
+                document.getElementById("detailAmountPaid").textContent = `$${
+                  sale.payment?.amountPaid?.toFixed(2) || "0.00"
+                }`;
+                document.getElementById("detailChange").textContent = `$${
+                  sale.payment?.change?.toFixed(2) || "0.00"
+                }`;
+                document.getElementById(
+                  "detailSaleTotal"
+                ).textContent = `$${sale.total.toFixed(2)}`;
+
+                const detailSaleItemsElement =
+                  document.getElementById("detailSaleItems");
+                detailSaleItemsElement.innerHTML = "";
+                sale.items.forEach((item) => {
+                  const itemRow = document.createElement("tr");
+                  itemRow.innerHTML = `
+                                <td>${item.name}</td>
+                                <td>$${item.price.toFixed(2)}</td>
+                                <td>${item.quantity}</td>
+                                <td>$${(item.price * item.quantity).toFixed(
+                                  2
+                                )}</td>
+                            `;
+                  detailSaleItemsElement.appendChild(itemRow);
+                });
+                selectedSaleForDetails.show();
+              }
+            });
+          });
+
+        // Update sort icons
+        document
+          .querySelectorAll("#history thead th .sort-icon")
+          .forEach((icon) => (icon.textContent = ""));
+        const currentSortTh = document.querySelector(
+          `#history thead th[data-sort-key="${salesSortKey}"]`
+        );
+        if (currentSortTh) {
+          currentSortTh.querySelector(".sort-icon").textContent =
+            salesSortOrder === "asc" ? " ▲" : " ▼";
+        }
+      }
+    </script>
+  </body>
+</html>
